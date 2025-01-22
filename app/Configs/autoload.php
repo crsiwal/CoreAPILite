@@ -2,6 +2,6 @@
 
 return [
     'libraries' => ['Session', 'Validation'],
-    'helpers' => ['url', 'form'],
+    'helpers' => ['url'],
     'languages' => ['en']
 ];

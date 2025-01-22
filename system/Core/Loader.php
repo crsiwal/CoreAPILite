@@ -2,9 +2,12 @@
 
 namespace System\Core;
 
+use App\Configs\Constants;
+
 class Loader {
     public static function init() {
-        $autoload = include __DIR__ . '/../../Configs/autoload.php';
+
+        $autoload = include Constants::CONFIGS_DIR_PATH . 'autoload.php';
 
         foreach ($autoload['libraries'] as $library) {
             self::loadLibrary($library);
@@ -20,7 +23,10 @@ class Loader {
     }
 
     public static function loadLibrary($library) {
-        $path = __DIR__ . "/../../Libraries/$library.php";
+        $path = Constants::LIBRARIES_DIR_PATH . "/$library.php";
+
+
+
         if (file_exists($path)) {
             include_once $path;
         }

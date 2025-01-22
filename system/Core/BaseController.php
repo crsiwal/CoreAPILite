@@ -2,9 +2,11 @@
 
 namespace System\Core;
 
+use App\Configs\Constants;
+
 class BaseController {
     protected function loadModel($model) {
-        $className = "App\\Models\\$model";
+        $className = Constants::APP_DIR_NAME . "\\" . Constants::MODELS_DIR_NAME . "\\$model";
         if (class_exists($className)) {
             return new $className();
         }

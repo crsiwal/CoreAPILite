@@ -1,0 +1,15 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Ensure the RewriteBase is set to the root directory (adjust if your app is in a subdirectory)
+RewriteBase /
+
+# Redirect all requests to index.php, except for files and directories that exist
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Optional: SSL redirection (commented out for development)
+# Uncomment the lines below when SSL is enabled in production
+# RewriteCond %{HTTPS} off
+# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

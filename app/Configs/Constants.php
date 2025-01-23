@@ -19,4 +19,8 @@ class Constants {
     const LANGUAGES_DIR_PATH = self::APP_PATH . self::LANGUAGES_DIR_NAME . '/';
     const LIBRARIES_DIR_PATH = self::APP_PATH . self::LIBRARIES_DIR_NAME . '/';
     const MODELS_DIR_PATH = self::APP_PATH . self::MODELS_DIR_NAME . '/';
+
+    // System constants
+    const SYSTEM_DIR_NAME = 'system';
+    const SYSTEM_PATH = BASEPATH . self::SYSTEM_DIR_NAME . '/';
 }

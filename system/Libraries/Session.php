@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Libraries;
+namespace System\Libraries;
 
 class Session {
     // Start the session if not already started

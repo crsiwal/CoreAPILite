@@ -4,7 +4,7 @@ namespace System\Core;
 
 use App\Configs\Constants;
 
-class BaseController {
+class Controller {
     protected function loadModel($model) {
         $className = Constants::APP_DIR_NAME . "\\" . Constants::MODELS_DIR_NAME . "\\$model";
         if (class_exists($className)) {

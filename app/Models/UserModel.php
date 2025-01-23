@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use System\Core\BaseModel;
+use System\Core\Model;
 
-class Users extends BaseModel {
+class UserModel extends Model {
     public function __construct() {
         parent::__construct("users");
     }

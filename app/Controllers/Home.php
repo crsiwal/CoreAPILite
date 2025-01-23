@@ -2,9 +2,9 @@
 
 namespace App\Controllers;
 
-use System\Core\BaseController;
+use System\Core\Controller;
 
-class HomeController extends BaseController {
+class Home extends Controller {
     // This is the method the route will call
     public function index() {
         echo "Home page";

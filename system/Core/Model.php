@@ -1,7 +1,7 @@
 <?php
 
 /**
- * BaseModel class
+ * Model class
  *
  * This class serves as the base model for the application.
  * It provides common functionality that can be used by other models.
@@ -15,7 +15,7 @@ use PDO;
 use PDOException;
 use App\Configs\Constants;
 
-class BaseModel {
+class Model {
     protected $table; // Table name to be set by child model
     protected $db;
 

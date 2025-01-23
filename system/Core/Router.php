@@ -72,7 +72,6 @@ class Router {
     public function delete($route, $controller, $methodName) {
         $filteredRoute = $this->getRouteRegex($route);
         // Add the route to the list        
-
         $this->add('DELETE', $filteredRoute, $controller, $methodName);
         return $this;  // Return Router instance for chaining
     }

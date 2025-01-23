@@ -2,12 +2,13 @@
 
 namespace System\Core;
 
-use App\Configs\Constants;
+use App\Configs\Constants as App_Constants;
+use System\Configs\Constants as System_Constants;
 
 class Loader {
 
     public static function init() {
-        $autoloadPath = Constants::CONFIGS_DIR_PATH . 'autoload.php';
+        $autoloadPath = App_Constants::CONFIGS_DIR_PATH . 'autoload.php';
 
         if (!file_exists($autoloadPath)) {
             throw new \Exception("Autoload file not found: " . $autoloadPath);
@@ -36,31 +37,31 @@ class Loader {
     }
 
     public static function loadConfigs($config) {
-        if (file_exists($appPath = Constants::CONFIGS_DIR_PATH . $config . ".php")) {
+        if (file_exists($appPath = App_Constants::CONFIGS_DIR_PATH . $config . ".php")) {
             include_once $appPath;
-        } elseif (file_exists($systemPath = Constants::SYSTEM_PATH . "Configs/" . $library . ".php")) {
+        } elseif (file_exists($systemPath = System_Constants::SYSTEM_CONFIGS_DIR_PATH . $library . ".php")) {
             include_once $systemPath;
         }
     }
 
     public static function loadLibraries($library) {
-        if (file_exists($appPath = Constants::LIBRARIES_DIR_PATH . $library . ".php")) {
+        if (file_exists($appPath = App_Constants::LIBRARIES_DIR_PATH . $library . ".php")) {
             include_once $appPath;
-        } elseif (file_exists($systemPath = Constants::SYSTEM_PATH . "Libraries/" . $library . ".php")) {
+        } elseif (file_exists($systemPath = System_Constants::SYSTEM_LIBRARIES_DIR_PATH . $library . ".php")) {
             include_once $systemPath;
         }
     }
 
     public static function loadHelpers($helper) {
-        if (file_exists($appPath = Constants::HELPERS_DIR_PATH . $helper . ".php")) {
+        if (file_exists($appPath = App_Constants::HELPERS_DIR_PATH . $helper . ".php")) {
             include_once $appPath;
-        } elseif (file_exists($systemPath = Constants::SYSTEM_PATH . "Helpers/" . $helper . ".php")) {
+        } elseif (file_exists($systemPath = System_Constants::SYSTEM_HELPERS_DIR_PATH . $helper . ".php")) {
             include_once $systemPath;
         }
     }
 
     public static function loadLanguages($language) {
-        if (file_exists($appPath = Constants::LANGUAGES_DIR_PATH . $language . ".php")) {
+        if (file_exists($appPath = App_Constants::LANGUAGES_DIR_PATH . $language . ".php")) {
             include_once $appPath;
         }
     }

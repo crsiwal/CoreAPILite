@@ -1,6 +1,6 @@
 <?php
 // Define the base path and application path
-define('BASEPATH', dirname(dirname(__FILE__)) . '/');
+define('BASEPATH', dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR);
 
 // Initialize the router
 use System\Core\Router;
@@ -9,7 +9,7 @@ use System\Core\Loader;
 
 // Simple autoloader to load classes dynamically
 spl_autoload_register(function ($class) {
-    $file = BASEPATH . '/' . str_replace('\\', '/', $class) . '.php';
+    $file = BASEPATH . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $class) . '.php';
     if (file_exists($file)) {
         include_once $file;
     }

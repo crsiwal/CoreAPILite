@@ -4,6 +4,7 @@ namespace App\Configs;
 
 class Constants {
     const APP_DIR_NAME = 'app';
+    const LOGS_DIR_NAME = 'logs';
     const CONFIGS_DIR_NAME = 'Configs';
     const CONTROLLERS_DIR_NAME = 'Controllers';
     const HELPERS_DIR_NAME = 'Helpers';
@@ -11,16 +12,16 @@ class Constants {
     const LIBRARIES_DIR_NAME = 'Libraries';
     const MODELS_DIR_NAME = 'Models';
     const PUBLIC_DIR_NAME = 'public';
-    const APP_PATH = BASEPATH . self::APP_DIR_NAME .  '/';
-    const PUBLIC_DIR_PATH = BASEPATH . self::PUBLIC_DIR_NAME . '/';
-    const CONFIGS_DIR_PATH = self::APP_PATH . self::CONFIGS_DIR_NAME . '/';
-    const CONTROLLERS_DIR_PATH = self::APP_PATH . self::CONTROLLERS_DIR_NAME . '/';
-    const HELPERS_DIR_PATH = self::APP_PATH . self::HELPERS_DIR_NAME . '/';
-    const LANGUAGES_DIR_PATH = self::APP_PATH . self::LANGUAGES_DIR_NAME . '/';
-    const LIBRARIES_DIR_PATH = self::APP_PATH . self::LIBRARIES_DIR_NAME . '/';
-    const MODELS_DIR_PATH = self::APP_PATH . self::MODELS_DIR_NAME . '/';
+    const APP_PATH = BASEPATH . self::APP_DIR_NAME .  DIRECTORY_SEPARATOR;
+    const PUBLIC_DIR_PATH = BASEPATH . self::PUBLIC_DIR_NAME . DIRECTORY_SEPARATOR;
+    const CONFIGS_DIR_PATH = self::APP_PATH . self::CONFIGS_DIR_NAME . DIRECTORY_SEPARATOR;
+    const CONTROLLERS_DIR_PATH = self::APP_PATH . self::CONTROLLERS_DIR_NAME . DIRECTORY_SEPARATOR;
+    const HELPERS_DIR_PATH = self::APP_PATH . self::HELPERS_DIR_NAME . DIRECTORY_SEPARATOR;
+    const LANGUAGES_DIR_PATH = self::APP_PATH . self::LANGUAGES_DIR_NAME . DIRECTORY_SEPARATOR;
+    const LIBRARIES_DIR_PATH = self::APP_PATH . self::LIBRARIES_DIR_NAME . DIRECTORY_SEPARATOR;
+    const MODELS_DIR_PATH = self::APP_PATH . self::MODELS_DIR_NAME . DIRECTORY_SEPARATOR;
 
-    // System constants
-    const SYSTEM_DIR_NAME = 'system';
-    const SYSTEM_PATH = BASEPATH . self::SYSTEM_DIR_NAME . '/';
+    // Logs Constants
+    const LOGS_LEVEL = 1;
+    const LOGS_DIR_PATH = BASEPATH . "write" . DIRECTORY_SEPARATOR . self::LOGS_DIR_NAME . DIRECTORY_SEPARATOR;
 }

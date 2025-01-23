@@ -5,6 +5,6 @@
 // $router->get('/users', 'HomeController', 'index');
 
 $router->group('/users')
-    ->get('/', 'HomeController', 'index')
-    ->get('/add', 'HomeController', 'add')
-    ->get('/add/{id:num}', 'HomeController', 'add');
+    ->get('/', 'Home', 'index')
+    ->get('/add', 'Home', 'add')
+    ->get('/add/{id:num}', 'Home', 'add');

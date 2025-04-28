@@ -5,19 +5,14 @@ namespace System\Libraries;
 use App\Configs\Constants;
 
 class Logger {
+    // The instance of the Logger (Singleton pattern)
+    private static $instance = null;
+
     private $logLevel;
     private $logFile;
     private $consoleOutput;
 
-    const LOG_LEVELS = [
-        0 => 'DISABLED',
-        1 => 'ERROR',
-        2 => 'WARNING',
-        3 => 'QUERY',
-        4 => 'DEBUG',
-        5 => 'INFO',
-        6 => 'ALL'
-    ];
+    const LOG_LEVELS = ['DISABLED', 'ERROR', 'DATA', 'WARNING', 'QUERY', 'DEBUG', 'INFO', 'ALL'];
 
     public function __construct(bool $consoleOutput = false) {
         $this->logLevel = Constants::LOGS_LEVEL;
@@ -27,6 +22,18 @@ class Logger {
         if (!file_exists(dirname($this->logFile))) {
             mkdir(dirname($this->logFile), 0777, true);
         }
+    }
+
+    // Prevent object cloning
+    private function __clone() {
+    }
+
+    // Get the singleton instance of the Logger
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
     private function log(string $level, string $message) {
@@ -46,6 +53,10 @@ class Logger {
 
     public function error(string $message) {
         $this->log('ERROR', $message);
+    }
+
+    public function data(string $message) {
+        $this->log('DATA', $message);
     }
 
     public function warning(string $message) {

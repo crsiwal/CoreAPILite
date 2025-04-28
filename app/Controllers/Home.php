@@ -9,10 +9,4 @@ class Home extends Controller {
     public function index() {
         echo "Home page";
     }
-
-    // Another method (example)
-    public function add($id) {
-        echo "Add user";
-        var_dump($id);
-    }
 }

@@ -1,3 +1,52 @@
+# IDE and Editor files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Composer
+/vendor/
+composer.lock
+
+# Uploaded files
+/public/uploads/
+/public/uploads/*
+
+# Logs
+*.log
+logs/
+
+# Write logs
+/write/
+/write/logs/
+/write/logs/*
+/write/logs/index.html
+error_log
+
+# Cache
+*.cache
+cache/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
+
 */config/development
 */logs/log-*.php
 !*/logs/index.html
@@ -5,14 +54,3 @@
 !system/cache/*
 !*/cache/index.html
 !*/cache/.htaccess
-
-user_guide_src/build/*
-user_guide_src/cilexer/build/*
-user_guide_src/cilexer/dist/*
-user_guide_src/cilexer/pycilexer.egg-info/*
-
-#codeigniter 3
-application/logs/*
-!application/logs/index.html
-!application/logs/.htaccess
-/vendor/

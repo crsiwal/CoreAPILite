@@ -2,124 +2,146 @@
 
 namespace System\Core;
 
+use App\Configs\Constants;
+use System\Libraries\Logger;
+use System\Libraries\Response;
+
 class Router {
+    private $routes = [];
+    private $groupPrefix = '';
+    private $groupMiddleware = [];
 
-    protected $routes = [];
-    protected $groupPrefix = '';  // Store the prefix for route groups
-
-    // Method to define a route group
-    public function group($prefix) {
-        // Ensure the prefix starts with a "/"
-        if (strpos($prefix, '/') !== 0) {
-            $prefix = '/' . $prefix;
-        }
-
-        $this->groupPrefix = $prefix;
-        return $this;  // Return Router instance for chaining
-    }
-
-    private function getRouteRegex($route) {
-        // Replace placeholders with stricter regex patterns based on types
-        return preg_replace_callback('/\{([a-zA-Z0-9_]+):([a-z]+)\}/', function ($matches) {
-            $paramName = $matches[1];
-            $paramType = $matches[2];
-
-            // Define regex for supported types
-            switch ($paramType) {
-                case 'num':    // Numbers only
-                    return '(?P<' . $paramName . '>\d+)';
-                case 'string': // Strings only (alphanumeric)
-                    return '(?P<' . $paramName . '>[a-zA-Z0-9]+)';
-                default:       // Fallback for unsupported types
-                    throw new \Exception("Unsupported parameter type: $paramType");
-            }
-        }, $route);
-    }
-
-    // Method for handling GET routes
-    public function get($route, $controller, $methodName) {
-        $filteredRoute = $this->getRouteRegex($route);
-        // Add the route to the list
-        $this->add('GET', $filteredRoute, $controller, $methodName);
-        return $this;  // Return Router instance for chaining
-    }
-
-    // Method for handling POST routes
-    public function post($route, $controller, $methodName) {
-        $filteredRoute = $this->getRouteRegex($route);
-        // Add the route to the list
-        $this->add('POST', $filteredRoute, $controller, $methodName);
-        return $this;  // Return Router instance for chaining
-    }
-
-    // Method for handling PUT routes
-    public function put($route, $controller, $methodName) {
-        $filteredRoute = $this->getRouteRegex($route);
-        // Add the route to the list        
-        $this->add('PUT', $filteredRoute, $controller, $methodName);
-        return $this;  // Return Router instance for chaining
-    }
-
-    // Method for handling PATCH routes
-    public function patch($route, $controller, $methodName) {
-        $filteredRoute = $this->getRouteRegex($route);
-        // Add the route to the list        
-        $this->add('PATCH', $filteredRoute, $controller, $methodName);
-        return $this;  // Return Router instance for chaining
-    }
-
-    // Method for handling DELETE routes
-    public function delete($route, $controller, $methodName) {
-        $filteredRoute = $this->getRouteRegex($route);
-        // Add the route to the list        
-        $this->add('DELETE', $filteredRoute, $controller, $methodName);
-        return $this;  // Return Router instance for chaining
-    }
-
-    // Add a route to the route list
-    private function add($method, $route, $controller, $methodName) {
-        // If a group prefix exists, prepend it to the route
-        if ($this->groupPrefix) {
-            $route = $this->groupPrefix . $route;
-        }
-        // Add the route to the list
+    public function addRoute($method, $path, $handler, $middleware = []) {
         $this->routes[] = [
-            'method' => $method,
-            'route' => $route,
-            'controller' => $controller,
-            'methodName' => $methodName,
+            'method' => strtoupper($method),
+            'path' => $this->normalizePath($this->groupPrefix . $path),
+            'handler' => $handler,
+            'middleware' => array_merge($this->groupMiddleware, $middleware)
         ];
     }
 
-    public function dispatch($requestUri, $requestMethod) {
-        foreach ($this->routes as $route) {
-            // Convert the route into a valid regex pattern
-            $pattern = "#^" . preg_replace('/\{([a-zA-Z0-9_]+)\}/', '(?P<\1>[^/]+)', $route['route']) . "/?$#";
+    public function get($path, $handler, $middleware = []) {
+        $this->addRoute('GET', $path, $handler, $middleware);
+    }
 
-            // Match the request URI against the pattern
-            if ($route['method'] === $requestMethod && preg_match($pattern, $requestUri, $params)) {
-                $controller = "App\\Controllers\\" . $route['controller'];
-                if (class_exists($controller)) {
-                    $controllerInstance = new $controller();
-                    if (method_exists($controllerInstance, $route['methodName'])) {
-                        // Extract named parameters from $params
-                        $params = array_filter($params, 'is_string', ARRAY_FILTER_USE_KEY);
-                        return $controllerInstance->{$route['methodName']}(...array_values($params));
-                    } else {
-                        http_response_code(500);
-                        echo json_encode(['error' => 'Method not found']);
+    public function post($path, $handler, $middleware = []) {
+        $this->addRoute('POST', $path, $handler, $middleware);
+    }
+
+    public function put($path, $handler, $middleware = []) {
+        $this->addRoute('PUT', $path, $handler, $middleware);
+    }
+
+    public function delete($path, $handler, $middleware = []) {
+        $this->addRoute('DELETE', $path, $handler, $middleware);
+    }
+
+    public function group($prefix, $callback, $middleware = []) {
+        $previousGroupPrefix = $this->groupPrefix;
+        $previousGroupMiddleware = $this->groupMiddleware;
+
+        $this->groupPrefix = $this->normalizePath($previousGroupPrefix . $prefix);
+        $this->groupMiddleware = array_merge($previousGroupMiddleware, $middleware);
+
+        call_user_func($callback, $this);
+
+        $this->groupPrefix = $previousGroupPrefix;
+        $this->groupMiddleware = $previousGroupMiddleware;
+    }
+
+    public function dispatch() {
+        $method = strtoupper($_SERVER['REQUEST_METHOD']);
+        $uri = $this->normalizePath($_SERVER['REQUEST_URI']);
+
+        // Extract query parameters from the URL
+        $queryParams = [];
+        if (strpos($uri, '?') !== false) {
+            $uriParts = explode('?', $uri);
+            $uri = $uriParts[0]; // Update URI to match the path only
+            parse_str($uriParts[1], $queryParams); // Parse the query string
+        }
+
+        foreach ($this->routes as $route) {
+            if ($route['method'] === $method && $this->match($route['path'], $uri, $params)) {
+                // Merge query parameters with route parameters
+                $params = array_merge($params, $queryParams);
+                foreach ($route['middleware'] as $middleware) {
+                    if (!$this->callMiddleware($middleware, $method, $uri)) {
                         return;
                     }
-                } else {
-                    http_response_code(500);
-                    echo json_encode(['error' => 'Controller not found']);
-                    return;
+                }
+
+                if (is_callable($route['handler'])) {
+                    return call_user_func_array($route['handler'], $params);
+                } elseif (is_string($route['handler']) && strpos($route['handler'], '@') !== false) {
+                    return $this->callController($route['handler'], $params);
                 }
             }
         }
 
-        // If no routes match, return 404
-        http_response_code(404);
-        echo json_encode(['error' => 'Not Found']);
+        Logger::getInstance()->error("404 Not Found: $method $uri");
+        Response::json(["error" => "404 Not Found"], Response::HTTP_NOT_FOUND);
+    }
+
+    private function normalizePath($path) {
+        return rtrim($path, '/') ?: '/';
+    }
+
+
+    private function match($routePath, $requestPath, &$params) {
+        $routeParts = explode('/', $routePath);
+        $requestParts = explode('/', $requestPath);
+
+        // Match the number of parts in the URL
+        if (count($routeParts) !== count($requestParts)) {
+            return false;
+        }
+
+        $params = [];
+        foreach ($routeParts as $index => $part) {
+            // Handle dynamic parameters like {id}
+            if (strpos($part, '{') === 0 && strpos($part, '}') === strlen($part) - 1) {
+                $params[] = $requestParts[$index]; // capture dynamic part
+            } elseif ($part !== $requestParts[$index]) {
+                return false; // exact match
+            }
+        }
+
+        return true;
+    }
+
+
+    private function callController($handler, $params) {
+        [$controller, $method] = explode('@', $handler);
+        $controllerClass = Constants::APP_DIR_NAME . "\\" . Constants::CONTROLLERS_DIR_NAME . "\\" . $controller;
+        if (!class_exists($controllerClass)) {
+            Logger::getInstance()->error("Controller not found: $controller");
+            Response::json(["error" => "Controller not found: $controller"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        $controllerInstance = new $controllerClass();
+
+        if (!method_exists($controllerInstance, $method)) {
+            Logger::getInstance()->error("Method not found in controller: $method");
+            Response::json(["error" => "Method not found in controller: $method"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return;
+        }
+
+        return call_user_func_array([$controllerInstance, $method], $params);
+    }
+
+    private function callMiddleware($middleware, $method, $uri) {
+        if (is_callable($middleware)) {
+            return call_user_func($middleware, $method, $uri);
+        } elseif (is_string($middleware) && class_exists($middleware)) {
+            $middlewareInstance = new $middleware();
+            if (method_exists($middlewareInstance, 'handle')) {
+                return call_user_func([$middlewareInstance, 'handle'], $method, $uri);
+            }
+        }
+        Logger::getInstance()->error("Invalid middleware: $middleware");
+        Response::json(["error" => "Invalid middleware: $middleware"], Response::HTTP_INTERNAL_SERVER_ERROR);
+        return false;
     }
 }

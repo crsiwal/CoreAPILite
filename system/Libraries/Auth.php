@@ -31,21 +31,12 @@ class Auth
     public static function validateToken($token)
     {
         if (! $token) {
-            Response::error([
-                'code'    => ResponseCode::UNAUTHORIZED,
-                'message' => 'Authorization token is required',
-            ]);
+            self::handleError('Authorization token is required', ResponseCode::UNAUTHORIZED);
         }
-
-        // Remove 'Bearer ' prefix if present
-        $token = str_replace('Bearer ', '', $token);
 
         $payload = self::$jwt->validate($token);
         if (! $payload) {
-            Response::error([
-                'code'    => ResponseCode::INVALID_TOKEN,
-                'message' => 'Invalid or expired token',
-            ]);
+            self::handleError('Invalid or expired token', ResponseCode::INVALID_TOKEN);
         }
 
         return $payload;
@@ -53,15 +44,12 @@ class Auth
 
     public static function getCurrentUser()
     {
-        $token   = Request::header('Authorization');
+        $token   = Request::bearerToken();
         $payload = self::validateToken($token);
 
         $user = self::$userModel->getById($payload['user_id']);
         if (! $user) {
-            Response::error([
-                'code'    => ResponseCode::USER_NOT_FOUND,
-                'message' => 'User not found',
-            ]);
+            self::handleError('User not found', ResponseCode::USER_NOT_FOUND);
         }
 
         return $user;
@@ -70,7 +58,7 @@ class Auth
     public static function isAuthenticated()
     {
         try {
-            $token = Request::header('Authorization');
+            $token = Request::bearerToken();
             return (bool) self::validateToken($token);
         } catch (\Exception $e) {
             return false;
@@ -79,7 +67,16 @@ class Auth
 
     public static function hasRole($role)
     {
-        $payload = self::validateToken(Request::header('Authorization'));
+        $token   = Request::bearerToken();
+        $payload = self::validateToken($token);
         return $payload['role'] === $role;
+    }
+
+    private static function handleError($message, $code)
+    {
+        Response::error([
+            'code'    => $code,
+            'message' => $message,
+        ], $code);
     }
 }

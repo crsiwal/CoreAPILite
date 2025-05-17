@@ -1,25 +1,24 @@
 # CoreAPILite
 
-A lightweight, high-performance REST API framework for PHP applications. Created and maintained by Rahul Siwal.
+A lightweight and powerful REST API framework for PHP applications. CoreAPILite provides a simple yet robust foundation for building modern web APIs with ease.
 
 ## 🚀 Features
 
-- Lightweight and fast REST API framework
-- PSR-4 autoloading compliant
-- Built-in routing system
-- Database abstraction layer
-- MVC architecture
-- Easy configuration management
-- Multilingual support
-- Helper functions for common tasks
-- Comprehensive testing suite
+- **Simple Routing System**: Easy-to-use routing with support for route groups and middleware
+- **MVC Architecture**: Clean separation of concerns with Models, Views, and Controllers
+- **Database Abstraction**: Powerful database operations with prepared statements
+- **Authentication**: Built-in user authentication and token management
+- **Validation**: Comprehensive input validation system
+- **Response Handling**: Standardized response codes and formats
+- **Middleware Support**: Flexible middleware system for request processing
+- **Configuration Management**: Easy configuration through environment files
 
 ## 📋 Requirements
 
 - PHP >= 7.4
-- JSON extension
-- PDO extension
-- Composer (for dependency management)
+- MySQL/MariaDB
+- Apache/Nginx
+- Composer
 
 ## 🛠 Installation
 
@@ -34,33 +33,53 @@ composer install
 ```
 
 3. Configure your environment:
-- Copy `.env.example` to `.env`
-- Update database and other configuration settings
+```bash
+cp .env.example .env
+```
+
+4. Update the `.env` file with your database credentials and other settings.
 
 ## 📁 Project Structure
 
 ```
-CoreAPILite/
-├── app/
-│   ├── Configs/      # Configuration files
-│   ├── Controllers/  # Application controllers
-│   ├── Helpers/      # Helper functions
-│   ├── Languages/    # Language files
-│   ├── Libraries/    # Core libraries
-│   └── Models/       # Data models
-├── public/           # Public assets and entry point
-├── system/           # Core system files
-├── tests/            # Test files
-└── write/            # Writeable directories
+app/
+├── Configs/          # Configuration files
+│   ├── routes.php    # Route definitions
+│   ├── database.php  # Database configuration
+│   ├── Constants.php # Framework constants
+│   └── ResponseCode.php # HTTP response codes
+├── Controllers/      # Application controllers
+├── Models/           # Data models
+├── Libraries/        # Core libraries
+├── Helpers/          # Helper functions
+└── Languages/        # Language files
 ```
 
-## 🎯 Usage
+## 📚 Documentation
 
-### Basic API Endpoint
+Comprehensive documentation is available in the `docs/` directory:
+
+- [Getting Started](docs/getting-started/README.md)
+- [Routing](docs/routing/README.md)
+- [Controllers](docs/controllers/README.md)
+- [Models](docs/models/README.md)
+- [Database](docs/database/README.md)
+- [Authentication](docs/authentication/README.md)
+- [Validation](docs/validation/README.md)
+- [Response Codes](docs/response-codes/README.md)
+- [Middleware](docs/middleware/README.md)
+- [Configuration](docs/configuration/README.md)
+
+## 💡 Quick Start
+
+### Basic Controller Example
 
 ```php
-// app/Controllers/ExampleController.php
-class ExampleController extends BaseController {
+namespace App\Controllers;
+
+use System\Core\Controller;
+
+class Home extends Controller {
     public function index() {
         return $this->response->json([
             'status' => 'success',
@@ -70,44 +89,49 @@ class ExampleController extends BaseController {
 }
 ```
 
-### Database Operations
+### Basic Model Example
 
 ```php
-// app/Models/ExampleModel.php
-class ExampleModel extends BaseModel {
-    public function getData() {
-        return $this->db->query("SELECT * FROM table_name")->fetchAll();
+namespace App\Models;
+
+use System\Core\Model;
+
+class User extends Model {
+    public function __construct() {
+        parent::__construct("users", __CLASS__);
     }
 }
 ```
 
-## 🔧 Configuration
+## 🔐 Security
 
-The framework uses a simple configuration system. All configuration files are located in `app/Configs/`. You can modify these files according to your needs.
+- Input validation and sanitization
+- Prepared statements for database queries
+- CSRF protection
+- Secure password hashing
+- Token-based authentication
 
-## 🧪 Testing
+## 🚀 Performance
 
-The framework comes with PHPUnit for testing. Run tests using:
-
-```bash
-composer test
-```
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👨‍💻 Author
-
-- **Rahul Siwal** - Creator and maintainer
+- Optimized database queries
+- Caching support
+- Efficient routing system
+- Lightweight core
 
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
 ## 📫 Support
 
-For support, please open an issue in the GitHub repository or contact the author.
+For support, please:
+- Check the [GitHub repository](https://github.com/yourusername/CoreAPILite)
+- Create an issue
+- Contact the maintainer
 
 ---
 

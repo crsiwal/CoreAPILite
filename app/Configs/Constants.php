@@ -12,6 +12,8 @@ class Constants {
     const LIBRARIES_DIR_NAME = 'Libraries';
     const MODELS_DIR_NAME = 'Models';
     const PUBLIC_DIR_NAME = 'public';
+    const DEFAULT_RECORDS_PER_PAGE = 25;
+    const DEFAULT_PAGE             = 1;
     const APP_PATH = BASEPATH . self::APP_DIR_NAME .  DIRECTORY_SEPARATOR;
     const PUBLIC_DIR_PATH = BASEPATH . self::PUBLIC_DIR_NAME . DIRECTORY_SEPARATOR;
     const CONFIGS_DIR_PATH = self::APP_PATH . self::CONFIGS_DIR_NAME . DIRECTORY_SEPARATOR;
